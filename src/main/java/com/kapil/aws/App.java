@@ -2,6 +2,7 @@ package com.kapil.aws;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.kapil.aws.database.DocumentDBConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -32,5 +33,6 @@ public class App implements RequestHandler<Object, Object> {
 
     public static void main(String[] args) {
         LOGGER.info("Logging from main method");
+        DocumentDBConnection.getInstance();
     }
 }
