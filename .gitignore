@@ -2,6 +2,7 @@
 ## Logs & Properties
 ##############################
 logs/
+*/application.properties
 
 ##############################
 ## Java
