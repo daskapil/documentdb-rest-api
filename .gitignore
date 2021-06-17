@@ -2,7 +2,7 @@
 ## Logs & Properties
 ##############################
 logs/
-/src/main/resources/application.properties
+src/main/resources/application.properties
 
 ##############################
 ## Java
