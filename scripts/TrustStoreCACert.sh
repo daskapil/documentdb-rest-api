@@ -1,5 +1,5 @@
 certsdir=/tmp/certs
-mkdir ${certsdir}
+mkdir -p ${certsdir}
 
 truststore=${certsdir}/rds-truststore.jks
 storepassword=truststorePassword
