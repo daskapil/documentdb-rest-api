@@ -25,19 +25,22 @@ public class DocumentDBConnection {
     }
 
     private static MongoClient getMongoClient() {
-        //	configureSSL();
+        configureSSL();
 
         // Using full connection string for MongoDB Atlas
-        MongoClient mongoClient = MongoClients.create(AppConfig.DB_CONNECTION_STRING.getValue());
+//        MongoClient mongoClient = MongoClients.create(AppConfig.DB_CONNECTION_STRING.getValue());
 
-//        Uncomment below for connecting use Connection String
-//        String connectionString = String.format(
-//                AppConfig.DB_CONNECTION_STRING_TEMPLATE.getValue(),
-//                AppConfig.DB_USER.getValue(),
-//                AppConfig.DB_PASSWORD.getValue(),
-//                AppConfig.DB_CLUSTER_ENDPOINT.getValue(),
-//                AppConfig.DB_READ_PREFERENCE.getValue());
-//        MongoClient mongoClient = MongoClients.create(connectionString);
+        // Uncomment below for connecting use Connection String
+        String connectionString = String.format(
+                AppConfig.DB_CONNECTION_STRING_TEMPLATE.getValue(),
+                AppConfig.DB_USER.getValue(),
+                AppConfig.DB_PASSWORD.getValue(),
+                AppConfig.DB_CLUSTER_ENDPOINT.getValue(),
+                AppConfig.DB_SSL.getValue(),
+                AppConfig.DB_REPLICATE_SET.getValue(),
+                AppConfig.DB_READ_PREFERENCE.getValue(),
+                AppConfig.DB_RETRY_WRITES.getValue());
+        MongoClient mongoClient = MongoClients.create(connectionString);
 
 
 
@@ -61,16 +64,20 @@ public class DocumentDBConnection {
 //				.build();
 
 //		MongoClient mongoClient = MongoClients.create(settings);
-        LOGGER.info("From DocumentDBConnection");
+        LOGGER.info("Connected to DocumentDB Cluster: " + connectionString);
         return mongoClient;
     }
 
     private static void configureSSL() {
-        // Update the below variables with your trust store and password
-        String truststore = "<truststore>";
-        String truststorePassword = "<truststorePassword>";
-        System.setProperty("javax.net.ssl.trustStore", truststore);
-        System.setProperty("javax.net.ssl.trustStorePassword", truststorePassword);
+        LOGGER.info("Configuring SSL... ");
+        String trustStore = "/tmp/certs/rds-truststore.jks";
+        String trustStorePassword = "trustStorePassword";
+
+        System.setProperty("javax.net.ssl.trustStore", trustStore);
+        System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
+
+        LOGGER.info("SSL trustStore: " + System.getProperty("javax.net.ssl.trustStore"));
+        LOGGER.info("SSL trustStorePassword: " + System.getProperty("javax.net.ssl.trustStorePassword"));
     }
 
     public MongoClient getClient() {
