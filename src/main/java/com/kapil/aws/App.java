@@ -38,8 +38,8 @@ public class App implements RequestHandler<Object, Object> {
         System.setProperty("javax.net.ssl.trustStore", trustStore);
         System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
 
-        LOGGER.info("trustStore: ", System.getProperty("javax.net.ssl.trustStore"));
-        LOGGER.info("trustStorePassword: ", System.getProperty("javax.net.ssl.trustStorePassword"));
+        LOGGER.info("trustStore: " + System.getProperty("javax.net.ssl.trustStore"));
+        LOGGER.info("trustStorePassword: " + System.getProperty("javax.net.ssl.trustStorePassword"));
 
         LOGGER.info("Logging from main method");
         DocumentDBConnection.getInstance();
