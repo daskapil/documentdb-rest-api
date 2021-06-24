@@ -1,11 +1,11 @@
-mydir=/tmp/certs
-mkdir ${mydir}
+certsdir=/tmp/certs
+mkdir ${certsdir}
 
-truststore=${mydir}/rds-truststore.jks
+truststore=${certsdir}/rds-truststore.jks
 storepassword=truststorePassword
 
-curl -sS "https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem" > ${mydir}/rds-combined-ca-bundle.pem
-awk 'split_after == 1 {n++;split_after=0} /-----END CERTIFICATE-----/ {split_after=1}{print > "rds-ca-" n ".pem"}' < ${mydir}/rds-combined-ca-bundle.pem
+curl -sS "https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem" > ${certsdir}/rds-combined-ca-bundle.pem
+awk 'split_after == 1 {n++;split_after=0} /-----END CERTIFICATE-----/ {split_after=1}{print > "rds-ca-" n ".pem"}' < ${certsdir}/rds-combined-ca-bundle.pem
 
 for CERT in rds-ca-*; do
   alias=$(openssl x509 -noout -text -in $CERT | perl -ne 'next unless /Subject:/; s/.*(CN=|CN = )//; print')
@@ -14,7 +14,7 @@ for CERT in rds-ca-*; do
   rm $CERT
 done
 
-rm ${mydir}/rds-combined-ca-bundle.pem
+rm ${certsdir}/rds-combined-ca-bundle.pem
 
 echo "Trust store content is: "
 
