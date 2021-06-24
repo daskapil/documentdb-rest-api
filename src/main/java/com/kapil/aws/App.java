@@ -32,7 +32,7 @@ public class App implements RequestHandler<Object, Object> {
     }
 
     public static void main(String[] args) {
-        String trustStore = "/tmp/certs";
+        String trustStore = "/tmp/certs/rds-truststore.jks";
         String trustStorePassword = "trustStorePassword";
 
         System.setProperty("javax.net.ssl.trustStore", trustStore);
