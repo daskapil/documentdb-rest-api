@@ -26,6 +26,8 @@ public class DocDBConnectionFactory {
     }
 
     private static MongoClient getMongoClient() {
+        // Set-up SSL
+        configureSSL();
         // Using full connection string for MongoDB Atlas
 //        MongoClient mongoClient = MongoClients.create(AppConfig.DB_CONNECTION_STRING.getValue());
 
@@ -65,7 +67,31 @@ public class DocDBConnectionFactory {
         LOGGER.info("Connected to DocumentDB Cluster");
         return mongoClient;
     }
+
+    private static void configureSSL() {
+        LOGGER.info("Configuring SSL... ");
+
+//        SsmClient ssmClient = DependencyFactory.ssmClient();
+//        String trustStore = SsmParameterUtil.getParaValue(ssmClient, System.getenv("TRUST_STORE"));
+//        String trustStorePassword = SsmParameterUtil.getParaValue(ssmClient, System.getenv("TRUST_STORE_PASSWORD"), true)));
+        String trustStore = "TRUST_STORE";
+        String trustStorePassword = "TRUST_STORE_PASSWORD";
+        LOGGER.info(trustStore);
+        LOGGER.info(trustStorePassword);
+//        ssmClient.close();
+
+//        if (Files.notExists(Paths.get(trustStore)))
+//            throw new DocDBRestApiException("RDS CA Certificate file could not found. Aborting!");
+
+        LOGGER.info("Trust Store exists!");
+        System.setProperty("javax.net.ssl.trustStore", trustStore);
+        System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
+        LOGGER.info("SSL trustStore: " + System.getProperty("javax.net.ssl.trustStore"));
+        LOGGER.info("SSL trustStorePassword: " + System.getProperty("javax.net.ssl.trustStorePassword"));
+    }
+
     private static final Consumer<Document> printConsumer = document -> LOGGER.info(document.toJson());
+
     public MongoClient getClient() {
         return mongoClient;
     }

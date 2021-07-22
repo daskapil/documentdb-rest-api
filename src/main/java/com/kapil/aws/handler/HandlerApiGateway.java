@@ -12,17 +12,15 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-public class HandlerApiGateway implements Handler, RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class HandlerApiGateway implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlerApiGateway.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DocCategoriesRefDao docCategoriesRefDao;
 
-    public HandlerApiGateway() throws IOException {
-        Handler.configureSSL();
+    public HandlerApiGateway() {
         docCategoriesRefDao = new DocCategoriesRefDao();
     }
 
