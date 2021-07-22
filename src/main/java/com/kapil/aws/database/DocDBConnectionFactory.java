@@ -3,30 +3,29 @@ package com.kapil.aws.database;
 import com.kapil.aws.config.AppConfig;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentDBConnection {
-    private static Logger LOGGER = LoggerFactory.getLogger(DocumentDBConnection.class);
+import java.util.function.Consumer;
 
-    private static DocumentDBConnection connection;
+public class DocDBConnectionFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocDBConnectionFactory.class);
+    private static DocDBConnectionFactory connection;
+    private final MongoClient mongoClient;
 
-    private MongoClient mongoClient = null;
-
-    private DocumentDBConnection() {
+    private DocDBConnectionFactory() {
         this.mongoClient = getMongoClient();
     }
 
-    public static DocumentDBConnection getInstance() {
+    public static DocDBConnectionFactory getInstance() {
         if (connection == null) {
-            connection = new DocumentDBConnection();
+            connection = new DocDBConnectionFactory();
         }
         return connection;
     }
 
     private static MongoClient getMongoClient() {
-        configureSSL();
-
         // Using full connection string for MongoDB Atlas
 //        MongoClient mongoClient = MongoClients.create(AppConfig.DB_CONNECTION_STRING.getValue());
 
@@ -41,8 +40,6 @@ public class DocumentDBConnection {
                 AppConfig.DB_READ_PREFERENCE.getValue(),
                 AppConfig.DB_RETRY_WRITES.getValue());
         MongoClient mongoClient = MongoClients.create(connectionString);
-
-
 
 //		MongoCredential credential = MongoCredential.createCredential(username, database, password.toCharArray());
 
@@ -64,22 +61,11 @@ public class DocumentDBConnection {
 //				.build();
 
 //		MongoClient mongoClient = MongoClients.create(settings);
-        LOGGER.info("Connected to DocumentDB Cluster: " + connectionString);
+        mongoClient.listDatabaseNames().forEach(System.out::println);
+        LOGGER.info("Connected to DocumentDB Cluster");
         return mongoClient;
     }
-
-    private static void configureSSL() {
-        LOGGER.info("Configuring SSL... ");
-        String trustStore = "/tmp/certs/rds-truststore.jks";
-        String trustStorePassword = "trustStorePassword";
-
-        System.setProperty("javax.net.ssl.trustStore", trustStore);
-        System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
-
-        LOGGER.info("SSL trustStore: " + System.getProperty("javax.net.ssl.trustStore"));
-        LOGGER.info("SSL trustStorePassword: " + System.getProperty("javax.net.ssl.trustStorePassword"));
-    }
-
+    private static final Consumer<Document> printConsumer = document -> LOGGER.info(document.toJson());
     public MongoClient getClient() {
         return mongoClient;
     }

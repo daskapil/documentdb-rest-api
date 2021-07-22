@@ -1,0 +1,105 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/kapildas/music-api/1.0.0
+info:
+  title: Music API
+  description: API for a music service
+  version: 0.3.0
+
+security:
+  - accessCode:
+      - read
+      - write
+
+paths:
+  # /playlist?limit=10&offset=20&search=jazz
+  /playlist:
+    get:
+      summary: playlist
+      description: Getting playlist.
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: limit
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          required: false
+          description: offset
+        - in: query
+          name: search
+          schema:
+            type: integer
+          required: false
+          description: search
+      responses:
+        '200': # status code
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+    post:
+      summary: New playlist
+      requestBody:
+        description: Add a new playlist
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newPlayList'
+      responses:
+        '200': # status code
+          description: Successful response
+
+  # /playlist/playlist333
+  /playlist/{playlist-id}:
+    get:
+      summary: playlist
+      description: Getting playlist.
+      parameters:
+        - in: path
+          name: playlist-id
+          schema:
+            type: integer
+          required: true
+          description: playlist-id
+      responses:
+        '200': # status code
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+components:
+  schemas:
+    newPlayList:
+      properties:
+        name:
+          type: string
+        songIds:
+          type: array
+          items:
+            type: integer
+      required:
+        - name
+  securitySchemes:
+    accessCode:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: 'http://example.com/oauth/auth'
+          tokenUrl: 'http://example.com/oauth/token'
+          scopes:
+            write: allows modifying resources
+            read: allows reading resources

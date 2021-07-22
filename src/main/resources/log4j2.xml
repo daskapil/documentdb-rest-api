@@ -1,35 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
-    <Properties>
-        <Property name="logDir">logs</Property>
-        <Property name="logFileName">app</Property>
-        <Property name="logPattern">%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Property>
-    </Properties>
-
+<Configuration status="WARN" packages="com.amazonaws.services.lambda.runtime.log4j2">
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="${logPattern}"/>
-        </Console>
-
-        <RollingFile name="RollingFile" fileName="${logDir}/${logFileName}.log"
-                     filePattern="${logDir}/$${date:yyyy-MM}/${logFileName}-%d{MM-dd-yyyy}-%i.log.gz">
+        <Lambda name="Lambda">
             <PatternLayout>
-                <Pattern>${logPattern}</Pattern>
+                <pattern>%X{AWSRequestId} %-5p %c{1} - %m%n</pattern>
             </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="1 MB"/>
-            </Policies>
-        </RollingFile>
+        </Lambda>
     </Appenders>
-
     <Loggers>
-        <Logger name="com.kapil.aws" level="debug" additivity="true">
-            <AppenderRef ref="Console"/>
-        </Logger>
-        <Root level="debug">
-            <AppenderRef ref="RollingFile"/>
+        <Root level="INFO">
+            <AppenderRef ref="Lambda"/>
         </Root>
+        <Logger name="com.kapil.aws" level="DEBUG" />
+        <Logger name="software.amazon.awssdk" level="WARN" />
+        <Logger name="software.amazon.awssdk.request" level="DEBUG" />
     </Loggers>
-
 </Configuration>

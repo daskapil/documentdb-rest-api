@@ -1,7 +1,5 @@
 package com.kapil.aws.config;
 
-import com.mongodb.internal.connection.Cluster;
-
 import java.util.ResourceBundle;
 
 public enum AppConfig {
@@ -14,7 +12,10 @@ public enum AppConfig {
     DB_REPLICATE_SET,
     DB_READ_PREFERENCE,
     DB_RETRY_WRITES,
-    DB_NAME_DEFAULT;
+    DB_NAME,
+    DB_NAME_DEFAULT,
+    COLL_DOC_METADATA,
+    COLL_DOC_CATEGORIES_REF;
 
     ResourceBundle appConfig = ResourceBundle.getBundle("application");
 
