@@ -1,12 +1,16 @@
 package com.kapil.aws.database;
 
+import com.kapil.aws.DocDBRestApiException;
 import com.kapil.aws.config.AppConfig;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
 
 public class DocDBConnectionFactory {
@@ -27,7 +31,12 @@ public class DocDBConnectionFactory {
 
     private static MongoClient getMongoClient() {
         // Set-up SSL
-        configureSSL();
+        try {
+            configureSSL();
+        } catch (IOException e) {
+            LOGGER.error("Error which finding the trust store");
+            e.printStackTrace();
+        }
         // Using full connection string for MongoDB Atlas
 //        MongoClient mongoClient = MongoClients.create(AppConfig.DB_CONNECTION_STRING.getValue());
 
@@ -63,14 +72,17 @@ public class DocDBConnectionFactory {
 //				.build();
 
 //		MongoClient mongoClient = MongoClients.create(settings);
-        mongoClient.listDatabaseNames().forEach(System.out::println);
+        mongoClient.listDatabaseNames().forEach(printConsumer);
         LOGGER.info("Connected to DocumentDB Cluster");
         return mongoClient;
     }
 
-    private static void configureSSL() {
+    private static void configureSSL() throws IOException {
         LOGGER.info("Configuring SSL... ");
-
+        Files.walk(Paths.get("/opt"), 4)
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .forEach(printConsumer);
 //        SsmClient ssmClient = DependencyFactory.ssmClient();
 //        String trustStore = SsmParameterUtil.getParaValue(ssmClient, System.getenv("TRUST_STORE"));
 //        String trustStorePassword = SsmParameterUtil.getParaValue(ssmClient, System.getenv("TRUST_STORE_PASSWORD"), true)));
@@ -80,8 +92,8 @@ public class DocDBConnectionFactory {
         LOGGER.info(trustStorePassword);
 //        ssmClient.close();
 
-//        if (Files.notExists(Paths.get(trustStore)))
-//            throw new DocDBRestApiException("RDS CA Certificate file could not found. Aborting!");
+        if (Files.notExists(Paths.get(trustStore)))
+            throw new DocDBRestApiException("RDS CA Certificate file could not found. Aborting!");
 
         LOGGER.info("Trust Store exists!");
         System.setProperty("javax.net.ssl.trustStore", trustStore);
@@ -90,7 +102,7 @@ public class DocDBConnectionFactory {
         LOGGER.info("SSL trustStorePassword: " + System.getProperty("javax.net.ssl.trustStorePassword"));
     }
 
-    private static final Consumer<Document> printConsumer = document -> LOGGER.info(document.toJson());
+    private static final Consumer<String> printConsumer = LOGGER::info;
 
     public MongoClient getClient() {
         return mongoClient;
